@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=salesapp_db
+      - DB_USER=salesapp_db_user
+      - DB_PASS=salesapp_db_super_secret_password
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13.1-alpine
+    environment:
+      - POSTGRES_DB=salesapp_db
+      - POSTGRES_USER=salesapp_db_user
+      - POSTGRES_PASSWORD=salesapp_db_super_secret_password
