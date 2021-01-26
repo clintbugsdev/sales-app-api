@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
-#
+
 # class Category(models.Model):
 #     """
 #     Category of product

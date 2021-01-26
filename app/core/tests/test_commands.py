@@ -9,7 +9,7 @@ class CommandTests(TestCase):
 
     def test_wait_for_db_ready(self):
         """
-        Test waiting for db when db is available
+        Test waiting for db until db is available
         """
         with patch('django.db.utils.ConnectionHandler.__getitem__') as gi:
             gi.return_value = True
