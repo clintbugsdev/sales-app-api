@@ -6,6 +6,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 
 from core.permissions import IsAuthenticatedManager
+from core.models import User
 from user import serializers
 
 
@@ -40,6 +41,12 @@ class UserProfileView(generics.RetrieveAPIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_object(self):
+        """
+        Retrieve and return authenticated user
+        """
+        return self.request.user
+
 
 class ChangePasswordView(generics.UpdateAPIView):
     """
@@ -49,7 +56,7 @@ class ChangePasswordView(generics.UpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class ManageUserViewset(viewsets.GenericAPIView,
+class ManageUserViewset(viewsets.GenericViewSet,
                         mixins.ListModelMixin,
                         mixins.CreateModelMixin,
                         mixins.RetrieveModelMixin,
@@ -58,5 +65,15 @@ class ManageUserViewset(viewsets.GenericAPIView,
     List, create, retrieve, and update user by authenticated manager
     """
     serializer_class = serializers.UserSerializer
+    queryset = User.objects.all().order_by('-id')
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (IsAuthenticatedManager,)
+
+    def get_queryset(self):
+        """
+        Retrieve the users to manage
+        """
+        return self.queryset.filter(
+            is_staff=True,
+            is_superuser=False
+        )
