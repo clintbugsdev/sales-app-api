@@ -8,7 +8,7 @@ from rest_framework import status
 LOGIN_URL = reverse('user:login')
 LOGOUT_URL = reverse('user:logout')
 PROFILE_URL = reverse('user:profile')
-CHANGE_PASSWORD_URL = reverse('user:change-password')
+CHANGE_PASSWORD_URL = reverse('user:change_password')
 USERS_URL = reverse('user:user-list')
 
 
@@ -40,7 +40,7 @@ class PublicUserApiTests(TestCase):
         """
         payload = {
             'email': 'test@testdev.com',
-            'password': 'testpass'
+            'password': 'testpass123'
         }
         create_user(**payload)
         res = self.client.post(LOGIN_URL, payload)
@@ -54,7 +54,7 @@ class PublicUserApiTests(TestCase):
         """
         payload = {
             'email': 'nouser@testdev.com',
-            'password': 'testpass'
+            'password': 'testpass123'
         }
         res = self.client.post(LOGIN_URL, payload)
 
@@ -67,7 +67,7 @@ class PublicUserApiTests(TestCase):
         """
         payload = {
             'email': 'test@testdev.com',
-            'password': 'wrongpass'
+            'password': 'wrongpass123'
         }
         res = self.client.post(LOGIN_URL, payload)
 
@@ -92,7 +92,7 @@ class PrivateManageUserApiTests(TestCase):
     def setUp(self):
         self.manager = create_user(
             email='testmanager@testdev.com',
-            password='password',
+            password='123password123',
             name='name',
             is_manager=True
         )
@@ -102,7 +102,7 @@ class PrivateManageUserApiTests(TestCase):
 
         self.staff = create_user(
             email='testuser@testdev.com',
-            password='password',
+            password='321secret321',
             name='name',
             is_staff=True
         )
@@ -114,7 +114,7 @@ class PrivateManageUserApiTests(TestCase):
         payload = {
             'name': 'Test name',
             'email': 'test@testdev.com',
-            'password': 'secret',
+            'password': '321secret321',
             'is_staff': True
         }
         res = self.client.post(USERS_URL, payload)
@@ -130,7 +130,7 @@ class PrivateManageUserApiTests(TestCase):
         """
         payload = {
             'name': '',
-            'email': 'testuser@testdev.com',
+            'email': 'thetestnewuser@testdev.com',
             'password': ''
         }
         res = self.client.post(USERS_URL, payload)
@@ -149,15 +149,15 @@ class PrivateManageUserApiTests(TestCase):
         self.client.force_authenticate(user=self.staff)
         payload = {
             'name': 'Test user',
-            'email': 'testuser@testdev.com',
-            'password': 'testpass'
+            'email': 'testforbiddenuser@testdev.com',
+            'password': 'testpass123'
         }
         res = self.client.post(USERS_URL, payload)
         user_exists = get_user_model().objects.filter(
             email=payload['email']
         ).exists()
 
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
         self.assertFalse(user_exists)
 
     def test_failed_create_user_exists(self):
@@ -167,7 +167,7 @@ class PrivateManageUserApiTests(TestCase):
         payload = {
             'name': 'Test staff',
             'email': 'teststaff@testdev.com',
-            'password': 'testpass'
+            'password': 'testpass312'
         }
         create_user(**payload)
         res = self.client.post(USERS_URL, payload)
@@ -219,61 +219,61 @@ class PrivateManageUserApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_successful_partial_update_manager_own_profile(self):
+    def test_successful_change_own_password(self):
         """
-        Test successful updating of manager's own profile details
+        Test successful updating of own password
         """
         payload = {
-            'name': 'new name',
+            'old_password': '123password123',
+            'new_password': '123321password',
+            'confirm_password': '123321password',
         }
 
-        res = self.client.patch(PROFILE_URL, payload)
+        res = self.client.patch(CHANGE_PASSWORD_URL, payload)
 
         self.manager.refresh_from_db()
-        self.assertEqual(self.manager.name, payload['name'])
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertTrue(self.manager.check_password(payload['new_password']))
+        self.assertNotIn('123321password', res.data)
 
     def test_success_partial_update_user_by_manager(self):
         """
         Test success partial updating of other user's profile details
         """
-        user = create_user({
-            'name': 'Old test name',
-            'email': 'testolduser@testdev.com',
-            'password': 'secret',
-            'is_staff': True
-        })
+        user = create_user(
+            name='Old test name',
+            email='testolduser@testdev.com',
+            password='secret',
+            is_staff=True
+        )
         url = user_url(user.id)
         payload = {
             'name': 'New test name',
         }
-        self.client(url, payload)
-        res = self.client.patch(USERS_URL, payload)
+        res = self.client.patch(url, payload)
         user.refresh_from_db()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(user.name, payload['name'])
 
-    def test_failed_full_update_not_allowed_by_manager(self):
+    def test_success_full_update_by_manager(self):
         """
         Test success full updating of other user's profile details
         """
-        user = create_user({
-            'name': 'New Old test name',
-            'email': 'testnewolduser@testdev.com',
-            'password': 'secret',
-            'is_staff': True
-        })
+        user = create_user(
+            name='Old new test name',
+            email='testnewolduser@testdev.com',
+            password='secret',
+            is_staff=True)
         url = user_url(user.id)
         payload = {
             'name': 'New test name',
             'email': 'testnew@testdev.com',
-            'password': 'secret',
-            'is_staff': True
+            'password': 'secret125434',
+            'is_active': True
         }
-        self.client(url, payload)
-        res = self.client.put(USERS_URL, payload)
+        res = self.client.put(url, payload)
         user.refresh_from_db()
 
-        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertNotEqual(user.name, payload['name'])
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(user.name, payload['name'])
+        self.assertEqual(user.email, payload['email'])

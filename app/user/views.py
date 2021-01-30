@@ -25,7 +25,7 @@ class LogoutUserView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def delete(self, request, format=None):
+    def delete(self, request):
         """
         Delete auth token to logout user
         """
@@ -52,8 +52,15 @@ class ChangePasswordView(generics.UpdateAPIView):
     """
     Change password of an authenticated user
     """
+    serializer_class = serializers.ChangePasswordSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self):
+        """
+        Retrieve and return authenticated user
+        """
+        return self.request.user
 
 
 class ManageUserViewset(viewsets.GenericViewSet,
@@ -74,6 +81,5 @@ class ManageUserViewset(viewsets.GenericViewSet,
         Retrieve the users to manage
         """
         return self.queryset.filter(
-            is_staff=True,
             is_superuser=False
-        )
+        ).exclude(id=self.request.user.id)

@@ -10,6 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the users object
     """
+    name = serializers.CharField(required=True)
     email = serializers.EmailField(
         required=True,
         validators=[
@@ -22,33 +23,35 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True,
         style={'input_type': 'password'},
         required=True,
-        min_length=6,
         validators=[validate_password]
     )
-    name = serializers.CharField(
-        required=True
-    )
+    is_active = serializers.BooleanField(required=False)
+    is_staff = serializers.BooleanField(required=False)
 
     class Meta:
         model = get_user_model()
-        fields = ('email', 'password', 'name')
+        fields = ('id', 'name', 'email', 'password', 'is_active', 'is_staff')
+        read_only_fields = ('id',)
 
     def create(self, validated_data):
         """
-        Create a new user with encrypted password and return it
+        Create a new staff user with encrypted password and return it
         """
+        validated_data['is_staff'] = True
         return get_user_model().objects.create_user(**validated_data)
 
     def update(self, instance, validated_data):
         """
         Update a user's detail
         """
-        instance.email = validated_data['email']
-        instance.name = validated_data['name']
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
 
-        instance.save()
+        if password:
+            user.set_password(password)
+            user.save()
 
-        return instance
+        return user
 
 
 class AuthTokenSerializer(serializers.Serializer):
@@ -83,7 +86,7 @@ class AuthTokenSerializer(serializers.Serializer):
         return attrs
 
 
-class ChangePasswordSerializer(serializers.ModelSerializer):
+class ChangePasswordSerializer(serializers.Serializer):
     """
     Serializer for the change password
     """
@@ -93,35 +96,42 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         trim_whitespace=False,
         required=True,
     )
-    password = serializers.CharField(
+    new_password = serializers.CharField(
         write_only=True,
         style={'input_type': 'password'},
+        trim_whitespace=False,
         required=True,
-        min_length=6,
+        validators=[validate_password]
+    )
+    confirm_password = serializers.CharField(
+        write_only=True,
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        required=True,
         validators=[validate_password]
     )
 
     class Meta:
         model = get_user_model()
-        fields = ('old_password', 'password')
+        fields = ('old_password', 'new_password', 'confirm_password')
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['confirm_password']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError("New password and confirm password fields didn't match.")
 
         return attrs
 
     def validate_old_password(self, value):
         user = self.context['request'].user
         if not user.check_password(value):
-            raise serializers.ValidationError({"old_password": "Old password is not correct"})
+            raise serializers.ValidationError("Old password is not correct")
         return value
 
     def update(self, instance, validated_data):
         user = self.context['request'].user
 
         if user.pk != instance.pk:
-            raise serializers.ValidationError({"authorize": "You don't have permission for this user."})
+            raise serializers.ValidationError("You don't have permission for this user.")
 
         instance.set_password(validated_data['new_password'])
         instance.save()
