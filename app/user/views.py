@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework import (generics, viewsets, mixins,
                             authentication, permissions, status)
@@ -6,15 +7,15 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 
 from core.permissions import IsAuthenticatedManager
-from core.models import User
-from user import serializers
+from user.serializers import (AuthTokenSerializer, UserSerializer,
+                              ChangePasswordSerializer, StaffUserSerializer)
 
 
 class LoginUserView(ObtainAuthToken):
     """
     Login user by creating own auth token
     """
-    serializer_class = serializers.AuthTokenSerializer
+    serializer_class = AuthTokenSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 
@@ -37,7 +38,7 @@ class UserProfileView(generics.RetrieveAPIView):
     """
     Retrieve profile details of an authenticated user
     """
-    serializer_class = serializers.UserSerializer
+    serializer_class = UserSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -52,7 +53,7 @@ class ChangePasswordView(generics.UpdateAPIView):
     """
     Change password of an authenticated user
     """
-    serializer_class = serializers.ChangePasswordSerializer
+    serializer_class = ChangePasswordSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -71,8 +72,8 @@ class ManageUserViewset(viewsets.GenericViewSet,
     """
     List, create, retrieve, and update user by authenticated manager
     """
-    serializer_class = serializers.UserSerializer
-    queryset = User.objects.all().order_by('-id')
+    serializer_class = UserSerializer
+    queryset = get_user_model().objects.all().order_by('-id')
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (IsAuthenticatedManager,)
 
@@ -80,6 +81,20 @@ class ManageUserViewset(viewsets.GenericViewSet,
         """
         Retrieve the users to manage
         """
+        filter_is_manager = False
+        if self.request.user.is_superuser:
+            filter_is_manager = True
+
         return self.queryset.filter(
+            is_manager=filter_is_manager,
             is_superuser=False
         ).exclude(id=self.request.user.id)
+
+    def get_serializer_class(self):
+        """
+        Return appropriate serializer class
+        """
+        if not self.request.user.is_superuser:
+            return StaffUserSerializer
+
+        return self.serializer_class

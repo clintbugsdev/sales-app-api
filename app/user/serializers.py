@@ -26,11 +26,19 @@ class UserSerializer(serializers.ModelSerializer):
         validators=[validate_password]
     )
     is_active = serializers.BooleanField(required=False)
-    is_staff = serializers.BooleanField(required=False)
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'name', 'email', 'password', 'is_active', 'is_staff')
+        fields = (
+            'id',
+            'name',
+            'email',
+            'password',
+            'is_active',
+            'is_staff',
+            'is_cashier',
+            'is_manager'
+        )
         read_only_fields = ('id',)
 
     def create(self, validated_data):
@@ -52,6 +60,25 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
+
+class StaffUserSerializer(UserSerializer):
+    """
+    Serializer for staff user objects
+    """
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            'id',
+            'name',
+            'email',
+            'password',
+            'is_active',
+            'is_staff',
+            'is_cashier'
+        )
+        read_only_fields = ('id',)
 
 
 class AuthTokenSerializer(serializers.Serializer):
@@ -117,21 +144,27 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs['new_password'] != attrs['confirm_password']:
-            raise serializers.ValidationError("New password and confirm password fields didn't match.")
+            raise serializers.ValidationError(
+                "New password and confirm password fields didn't match."
+            )
 
         return attrs
 
     def validate_old_password(self, value):
         user = self.context['request'].user
         if not user.check_password(value):
-            raise serializers.ValidationError("Old password is not correct")
+            raise serializers.ValidationError(
+                "Old password is not correct"
+            )
         return value
 
     def update(self, instance, validated_data):
         user = self.context['request'].user
 
         if user.pk != instance.pk:
-            raise serializers.ValidationError("You don't have permission for this user.")
+            raise serializers.ValidationError(
+                "You don't have permission for this user."
+            )
 
         instance.set_password(validated_data['new_password'])
         instance.save()

@@ -78,7 +78,10 @@ class PublicUserApiTests(TestCase):
         """
         Test failed user login with missing data for email field
         """
-        res = self.client.post(LOGIN_URL, {'email': '', 'password': 'testpass'})
+        res = self.client.post(LOGIN_URL, {
+            'email': '',
+            'password': 'testpass'
+        })
 
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
@@ -94,17 +97,23 @@ class PrivateManageUserApiTests(TestCase):
             email='testmanager@testdev.com',
             password='123password123',
             name='name',
-            is_manager=True
+            is_active=True,
+            is_staff=True,
+            is_cashier=True,
+            is_manager=True,
         )
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.manager)
 
-        self.staff = create_user(
+        self.cashier = create_user(
             email='testuser@testdev.com',
             password='321secret321',
             name='name',
-            is_staff=True
+            is_active=True,
+            is_staff=True,
+            is_cashier=True,
+            is_manager=False
         )
 
     def test_successful_create_user_by_manager(self):
@@ -146,7 +155,7 @@ class PrivateManageUserApiTests(TestCase):
         Test failed creation of user by a non-manager user
         """
         self.client = APIClient()
-        self.client.force_authenticate(user=self.staff)
+        self.client.force_authenticate(user=self.cashier)
         payload = {
             'name': 'Test user',
             'email': 'testforbiddenuser@testdev.com',
@@ -162,11 +171,11 @@ class PrivateManageUserApiTests(TestCase):
 
     def test_failed_create_user_exists(self):
         """
-        Test failed create user with existing data
+        Test failed creation of a user with existing data
         """
         payload = {
-            'name': 'Test staff',
-            'email': 'teststaff@testdev.com',
+            'name': 'Test cashier',
+            'email': 'testcashier@testdev.com',
             'password': 'testpass312'
         }
         create_user(**payload)
@@ -176,7 +185,7 @@ class PrivateManageUserApiTests(TestCase):
 
     def test_failed_create_user_short_password(self):
         """
-        Test failed create user with lesser characters than the required
+        Test failed creation of a user with lesser characters than the required
         """
         payload = {
             'name': 'Test',
@@ -191,16 +200,21 @@ class PrivateManageUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(user_exists)
 
-    def test_retrieve_profile_success(self):
+    def test_retrieve_manager_profile_success(self):
         """
-        Test retrieving profile for logged in user
+        Test retrieving profile details of an authenticated manager
         """
         res = self.client.get(PROFILE_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, {
-            'name': self.user.name,
-            'email': self.user.email
+            'id': self.manager.id,
+            'name': self.manager.name,
+            'email': self.manager.email,
+            'is_active': self.manager.is_active,
+            'is_staff': self.manager.is_staff,
+            'is_cashier': self.manager.is_cashier,
+            'is_manager': self.manager.is_manager
         })
 
     def test_failed_post_profile_not_allowed(self):
@@ -237,7 +251,7 @@ class PrivateManageUserApiTests(TestCase):
 
     def test_success_partial_update_user_by_manager(self):
         """
-        Test success partial updating of other user's profile details
+        Test successful partial updating of a manageable user's profile
         """
         user = create_user(
             name='Old test name',
@@ -257,7 +271,7 @@ class PrivateManageUserApiTests(TestCase):
 
     def test_success_full_update_by_manager(self):
         """
-        Test success full updating of other user's profile details
+        Test successful updating of a manageable user's profile
         """
         user = create_user(
             name='Old new test name',

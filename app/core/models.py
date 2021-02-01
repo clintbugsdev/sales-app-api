@@ -18,12 +18,40 @@ class UserManager(BaseUserManager):
 
         return user
 
+    def create_cashier(self, email, password):
+        """
+        Creates and save a new cashier
+        """
+        user = self.create_user(email, password)
+        user.is_staff = True
+        user.is_cashier = True
+        user.is_manager = False
+        user.is_superuser = False
+        user.save(using=self._db)
+
+        return user
+
+    def create_manager(self, email, password):
+        """
+        Creates and save a new manager
+        """
+        user = self.create_user(email, password)
+        user.is_staff = True
+        user.is_cashier = True
+        user.is_manager = True
+        user.is_superuser = False
+        user.save(using=self._db)
+
+        return user
+
     def create_superuser(self, email, password):
         """
         Creates and saves a new super user
         """
         user = self.create_user(email, password)
         user.is_staff = True
+        user.is_cashier = True
+        user.is_manager = True
         user.is_superuser = True
         user.save(using=self._db)
 
@@ -38,21 +66,27 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_cashier = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
 
 
-# class Category(models.Model):
-#     """
-#     Category of product
-#     """
-#     name = models.CharField(max_length=225)
-#
-#     def __str__(self):
-#         return self.name
+class Category(models.Model):
+    """
+    Category of product
+    """
+    name = models.CharField(max_length=225)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 #
 #
 # class Unit(models.Model):
