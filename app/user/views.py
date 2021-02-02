@@ -81,14 +81,11 @@ class ManageUserViewset(viewsets.GenericViewSet,
         """
         Retrieve the users to manage
         """
-        filter_is_manager = False
-        if self.request.user.is_superuser:
-            filter_is_manager = True
+        params = {'is_superuser': False}
+        if self.request.user.is_manager and not self.request.user.is_superuser:
+            params['is_manager'] = False
 
-        return self.queryset.filter(
-            is_manager=filter_is_manager,
-            is_superuser=False
-        ).exclude(id=self.request.user.id)
+        return self.queryset.filter(**params).exclude(id=self.request.user.id)
 
     def get_serializer_class(self):
         """

@@ -5,11 +5,12 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from core.models import Category
+from core.models import Category, Unit
 
-from product.serializers import CategorySerializer
+from product.serializers import CategorySerializer, UnitSerializer
 
 CATEGORIES_URL = reverse('product:category-list')
+UNITS_URL = reverse('product:unit-list')
 
 
 def category_detail_url(category_id):
@@ -136,3 +137,18 @@ class PrivateCategoryApiTests(TestCase):
         res = self.client.post(CATEGORIES_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_successful_retrieve_units_by_manager(self):
+        """
+        Test success retrieve categories by manager
+        """
+        Unit.objects.create(name='piece', short_name='pc')
+        Unit.objects.create(name='kilogram', short_name='kg')
+
+        res = self.client.get(UNITS_URL)
+
+        units = Unit.objects.all().order_by('-name')
+        serializer = UnitSerializer(units, many=True)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)

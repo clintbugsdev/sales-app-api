@@ -5,6 +5,7 @@ from product import views
 
 router = DefaultRouter()
 router.register('categories', views.CategoryViewSet)
+router.register('units', views.UnitViewSet)
 
 app_name = 'product'
 

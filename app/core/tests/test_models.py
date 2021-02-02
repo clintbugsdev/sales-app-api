@@ -97,18 +97,18 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(category), category.name)
-    #
-    # def test_unit_str(self):
-    #     """
-    #     Test the unit string representation
-    #     """
-    #     unit = models.Unit.objects.create(
-    #         name='Piece',
-    #         short_name='pc'
-    #     )
-    #
-    #     self.assertEqual(str(unit), unit.name)
-    #
+
+    def test_unit_str(self):
+        """
+        Test the unit string representation
+        """
+        unit = models.Unit.objects.create(
+            name='Piece',
+            short_name='pc'
+        )
+
+        self.assertEqual(str(unit), unit.name)
+
     # def test_customer_str(self):
     #     """
     #     Test the customer string representation

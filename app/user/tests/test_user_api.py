@@ -5,6 +5,8 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
+from user.serializers import StaffUserSerializer
+
 LOGIN_URL = reverse('user:login')
 LOGOUT_URL = reverse('user:logout')
 PROFILE_URL = reverse('user:profile')
@@ -116,6 +118,49 @@ class PrivateManageUserApiTests(TestCase):
             is_manager=False
         )
 
+    def test_successful_retrieve_users_by_manager(self):
+        """
+        Test successful retrieve user by manager
+        """
+        get_user_model().objects.create(
+            email='testuser001@testdev.com',
+            password='321secret321',
+            name='name',
+            is_active=True,
+            is_staff=True,
+            is_cashier=True,
+            is_manager=False
+        )
+        get_user_model().objects.create(
+            email='testuser002@testdev.com',
+            password='321secret321',
+            name='name',
+            is_active=True,
+            is_staff=True,
+            is_cashier=False,
+            is_manager=False
+        )
+
+        res = self.client.get(USERS_URL)
+
+        users = get_user_model() \
+            .objects.all().order_by('-id') \
+            .filter(is_manager=False).exclude(id=self.manager.id)
+        serializer = StaffUserSerializer(users, many=True)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_failed_retrieve_users_by_cashier(self):
+        """
+        Test failed retrieve users by cashier
+        """
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.cashier)
+        res = self.client.get(USERS_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_successful_create_user_by_manager(self):
         """
         Test successful creation of a user with valid payload
@@ -150,7 +195,7 @@ class PrivateManageUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(exists)
 
-    def test_failed_create_user_by_non_manager(self):
+    def test_failed_create_user_by_cashier(self):
         """
         Test failed creation of user by a non-manager user
         """

@@ -87,17 +87,20 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-#
-#
-# class Unit(models.Model):
-#     """
-#     Unit of product
-#     """
-#     name = models.CharField(max_length=75)
-#     short_name = models.CharField(max_length=25)
-#
-#     def __str__(self):
-#         return self.name
+
+
+class Unit(models.Model):
+    """
+    Unit of product
+    """
+    name = models.CharField(max_length=75)
+    short_name = models.CharField(max_length=25)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
 #
 #
 # class Customer(models.Model):
