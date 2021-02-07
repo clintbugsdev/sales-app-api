@@ -13,6 +13,20 @@ def sample_user(email='test@testdev.com', password='testpass'):
     return get_user_model().objects.create_user(email, password)
 
 
+def sample_category(name='Hardware'):
+    """
+    Create a sample category for product
+    """
+    return models.Category.objects.create(name=name)
+
+
+def sample_unit(name='gallon', short_name='gal'):
+    """
+    Create a sample unit for product
+    """
+    return models.Unit.objects.create(name=name, short_name=short_name)
+
+
 class ModelTests(TestCase):
 
     def test_successful_create_user_valid_email(self):
@@ -88,7 +102,7 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_manager)
         self.assertTrue(user.is_superuser)
 
-    def test_category_str(self):
+    def test_successful_category_str(self):
         """
         Test the category string representation
         """
@@ -98,7 +112,7 @@ class ModelTests(TestCase):
 
         self.assertEqual(str(category), category.name)
 
-    def test_unit_str(self):
+    def test_successful_unit_str(self):
         """
         Test the unit string representation
         """
@@ -109,18 +123,20 @@ class ModelTests(TestCase):
 
         self.assertEqual(str(unit), unit.name)
 
-    # def test_customer_str(self):
-    #     """
-    #     Test the customer string representation
-    #     """
-    #     customer = models.Customer.objects.create(
-    #         code='00001',
-    #         name='Juan Luna',
-    #         birthdate=datetime.date(2001, 1, 1),
-    #         gender='Male',
-    #         contact='+09232123',
-    #         address='1st Road, Baguio City 2601',
-    #         email='cust@testdev.com',
-    #     )
-    #
-    #     self.assertEqual(str(customer), customer.name)
+    def test_successful_product_str(self):
+        """
+        Test the product string representation
+        """
+
+        product = models.Product.objects.create(
+            code='00001',
+            name='Oishi Crackers',
+            unit=sample_unit(),
+            unit_in_stock=100,
+            unit_price=10.00,
+            discount_percentage=0.00,
+            reorder_level=20,
+            on_sale=False
+        )
+
+        self.assertEqual(str(product), product.name)

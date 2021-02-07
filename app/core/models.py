@@ -76,6 +76,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
 
+class Unit(models.Model):
+    """
+    Unit of product
+    """
+    name = models.CharField(max_length=75)
+    short_name = models.CharField(max_length=25)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Category(models.Model):
     """
     Category of product
@@ -89,31 +103,27 @@ class Category(models.Model):
         return self.name
 
 
-class Unit(models.Model):
+class Product(models.Model):
     """
-    Unit of product
+    Product in store
     """
-    name = models.CharField(max_length=75)
-    short_name = models.CharField(max_length=25)
-    is_active = models.BooleanField(default=True)
+
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    unit_in_stock = models.FloatField()
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    discount_percentage = models.DecimalField(max_digits=4, decimal_places=2)
+    reorder_level = models.FloatField()
+    on_sale = models.BooleanField(default=False)
+
+    unit = models.ForeignKey(
+        'Unit',
+        on_delete=models.RESTRICT
+    )
+    categories = models.ManyToManyField('Category')
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
-#
-#
-# class Customer(models.Model):
-#     """
-#     Customer of store
-#     """
-#     code = models.CharField(max_length=255)
-#     name = models.CharField(max_length=255)
-#     birthdate = models.DateField()
-#     gender = models.CharField(max_length=25)
-#     contact = models.CharField(max_length=255)
-#     address = models.CharField(max_length=255)
-#     email = models.EmailField(max_length=255)
-#
-#     def __str__(self):
-#         return self.name
