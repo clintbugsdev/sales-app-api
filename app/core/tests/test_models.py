@@ -13,18 +13,18 @@ def sample_user(email='test@testdev.com', password='testpass'):
     return get_user_model().objects.create_user(email, password)
 
 
-def sample_category(name='Hardware'):
-    """
-    Create a sample category for product
-    """
-    return models.Category.objects.create(name=name)
-
-
 def sample_unit(name='gallon', short_name='gal'):
     """
     Create a sample unit for product
     """
     return models.Unit.objects.create(name=name, short_name=short_name)
+
+
+def sample_category(name='Hardware'):
+    """
+    Create a sample category for product
+    """
+    return models.Category.objects.create(name=name)
 
 
 class ModelTests(TestCase):
@@ -140,3 +140,32 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(product), product.name)
+
+    def test_successful_supplier_str(self):
+        """
+        Test the supplier string representation
+        """
+
+        supplier = models.Supplier.objects.create(
+            code='00001',
+            name='Product supplier 01',
+            contact_no='3123123',
+            address='1st Street, New Africa',
+            email='supp@testdev.com'
+        )
+
+        self.assertEqual(str(supplier), supplier.name)
+
+    def test_successful_customer_str(self):
+        """
+        Test the customer string representation
+        """
+
+        customer = models.Customer.objects.create(
+            code='4326',
+            name='Store customer',
+            contact_no='3123125763',
+            address='1st Street, New Asia'
+        )
+
+        self.assertEqual(str(customer), customer.name)

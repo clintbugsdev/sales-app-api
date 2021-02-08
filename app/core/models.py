@@ -127,3 +127,39 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Supplier(models.Model):
+    """
+    Supplier of products
+    """
+
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    contact_no = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Customer(models.Model):
+    """
+    Customer of the store
+    """
+
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    contact_no = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    email = models.EmailField(max_length=255, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
