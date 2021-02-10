@@ -65,7 +65,7 @@ class PublicProductApiTests(TestCase):
 
 class PrivateProductApiTests(TestCase):
     """
-    Test authenticated product API access
+    Test the Product API for authenticated user
     """
 
     def setUp(self):

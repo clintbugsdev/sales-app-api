@@ -38,7 +38,7 @@ class PublicCategoryApiTests(TestCase):
 
 class PrivateCategoryApiTests(TestCase):
     """
-    Test the authorized user category API
+    Test the Category API for authenticated user
     """
 
     def setUp(self):

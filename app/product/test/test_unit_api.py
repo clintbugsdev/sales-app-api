@@ -38,7 +38,7 @@ class PublicUnitApiTests(TestCase):
 
 class PrivateUnitApiTests(TestCase):
     """
-    Test the authorized user unit API
+    Test the Unit API for authenticated user
     """
 
     def setUp(self):

@@ -13,7 +13,7 @@ class BaseProductAttrViewSet(viewsets.GenericViewSet,
                              mixins.RetrieveModelMixin,
                              mixins.UpdateModelMixin):
     """
-    Base viewset for user owned product attributes
+    Base viewset for product attributes
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
