@@ -6,9 +6,8 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
-        """
-        Creates and saves a new user
-        """
+        """Creates and saves a new user"""
+
         if not email:
             raise ValueError('User must have an email address')
 
@@ -19,9 +18,8 @@ class UserManager(BaseUserManager):
         return user
 
     def create_cashier(self, email, password):
-        """
-        Creates and save a new cashier
-        """
+        """Creates and save a new cashier"""
+
         user = self.create_user(email, password)
         user.is_staff = True
         user.is_cashier = True
@@ -32,9 +30,8 @@ class UserManager(BaseUserManager):
         return user
 
     def create_manager(self, email, password):
-        """
-        Creates and save a new manager
-        """
+        """Creates and save a new manager"""
+
         user = self.create_user(email, password)
         user.is_staff = True
         user.is_cashier = True
@@ -45,9 +42,8 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password):
-        """
-        Creates and saves a new super user
-        """
+        """Creates and saves a new super user"""
+
         user = self.create_user(email, password)
         user.is_staff = True
         user.is_cashier = True
@@ -59,9 +55,8 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """
-    Custom user model that supports using email instead of username
-    """
+    """Custom user model that supports using email instead of username"""
+
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
@@ -77,9 +72,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Unit(models.Model):
-    """
-    Unit of product
-    """
+    """Unit of product"""
+
     name = models.CharField(max_length=75)
     short_name = models.CharField(max_length=25)
     is_active = models.BooleanField(default=True)
@@ -91,9 +85,8 @@ class Unit(models.Model):
 
 
 class Category(models.Model):
-    """
-    Category of product
-    """
+    """Category of product"""
+
     name = models.CharField(max_length=225)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -104,9 +97,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    """
-    Product in store
-    """
+    """Product in store"""
 
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
@@ -130,9 +121,7 @@ class Product(models.Model):
 
 
 class Supplier(models.Model):
-    """
-    Supplier of products
-    """
+    """Supplier of product"""
 
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
@@ -148,9 +137,7 @@ class Supplier(models.Model):
 
 
 class Customer(models.Model):
-    """
-    Customer of the store
-    """
+    """Customer of the store"""
 
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)

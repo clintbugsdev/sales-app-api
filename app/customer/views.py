@@ -12,9 +12,8 @@ class BaseCustomerAttrViewSet(viewsets.GenericViewSet,
                               mixins.CreateModelMixin,
                               mixins.RetrieveModelMixin,
                               mixins.UpdateModelMixin):
-    """
-    Base viewset for user owned product attributes
-    """
+    """Base viewset for user owned product attributes"""
+
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
         'create': [IsAuthenticatedManager],

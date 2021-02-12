@@ -7,9 +7,8 @@ from rest_framework.validators import UniqueValidator
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the users object
-    """
+    """Serializer for the users object"""
+
     name = serializers.CharField(required=True)
     email = serializers.EmailField(
         required=True,
@@ -42,16 +41,14 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
     def create(self, validated_data):
-        """
-        Create a new staff user with encrypted password and return it
-        """
+        """Create a new staff user with encrypted password and return it"""
+
         validated_data['is_staff'] = True
         return get_user_model().objects.create_user(**validated_data)
 
     def update(self, instance, validated_data):
-        """
-        Update a user's detail
-        """
+        """Update a user's detail"""
+
         password = validated_data.pop('password', None)
         user = super().update(instance, validated_data)
 
@@ -63,9 +60,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class StaffUserSerializer(UserSerializer):
-    """
-    Serializer for staff user objects
-    """
+    """Serializer for staff user objects"""
 
     class Meta:
         model = get_user_model()
@@ -114,9 +109,8 @@ class AuthTokenSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    """
-    Serializer for the change password
-    """
+    """Serializer for the change password"""
+
     old_password = serializers.CharField(
         write_only=True,
         style={'input_type': 'password'},

@@ -41,9 +41,8 @@ class UserAdmin(BaseUserAdmin):
 
 
 class BaseAttrAdmin(ModelAdmin):
-    """
-    Base attributes administration
-    """
+    """Base attributes administration"""
+
     list_display = ['name', 'created_at', 'updated_at']
 
     def has_delete_permission(self, request, obj=None):

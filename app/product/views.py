@@ -12,9 +12,8 @@ class BaseProductAttrViewSet(viewsets.GenericViewSet,
                              mixins.CreateModelMixin,
                              mixins.RetrieveModelMixin,
                              mixins.UpdateModelMixin):
-    """
-    Base viewset for product attributes
-    """
+    """Base viewset for product attributes"""
+
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
         'create': [IsAuthenticatedManager],
@@ -29,9 +28,8 @@ class BaseProductAttrViewSet(viewsets.GenericViewSet,
         return self.queryset.order_by('name').distinct()
 
     def get_permissions(self):
-        """
-        Return permission_classes depending on action
-        """
+        """Return permission_classes depending on action"""
+
         try:
             # return permission_classes depending on `action`
             return [
@@ -49,25 +47,22 @@ class BaseProductAttrViewSet(viewsets.GenericViewSet,
 
 
 class UnitViewSet(BaseProductAttrViewSet):
-    """
-    Manage unit in the database
-    """
+    """Manage unit in the database"""
+
     queryset = Unit.objects.all()
     serializer_class = serializers.UnitSerializer
 
 
 class CategoryViewSet(BaseProductAttrViewSet):
-    """
-    Manage category in the database
-    """
+    """Manage category in the database"""
+
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
 
 
 class ProductViewSet(BaseProductAttrViewSet):
-    """
-    Manage product in the database
-    """
+    """Manage product in the database"""
+
     queryset = Product.objects.all().order_by('name')
     serializer_class = serializers.ProductSerializer
 
@@ -78,15 +73,13 @@ class ProductViewSet(BaseProductAttrViewSet):
     }
 
     def _params_to_ints(self, qs):
-        """
-        Convert a list of string IDs to a list of integers
-        """
+        """Convert a list of string IDs to a list of integers"""
+
         return [int(str_id) for str_id in qs.split(',')]
 
     def get_queryset(self):
-        """
-        Retrieve the products for the authenticated user
-        """
+        """Retrieve the products for the authenticated user"""
+
         unit = self.request.query_params.get('unit')
         categories = self.request.query_params.get('categories')
         queryset = self.queryset
@@ -101,9 +94,8 @@ class ProductViewSet(BaseProductAttrViewSet):
         return queryset.filter()
 
     def get_serializer_class(self):
-        """
-        Retrieve appropriate serializer class
-        """
+        """Retrieve appropriate serializer class"""
+
         if self.action == 'retrieve':
             return serializers.ProductDetailSerializer
 

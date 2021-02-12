@@ -4,9 +4,7 @@ from core.models import Customer
 
 
 class CustomerSerializer(serializers.ModelSerializer):
-    """
-    Serializer for Customer objects
-    """
+    """Serializer for Customer objects"""
 
     class Meta:
         model = Customer

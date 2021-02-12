@@ -15,31 +15,26 @@ USERS_URL = reverse('user:user-list')
 
 
 def create_user(**params):
-    """
-    Create new user
-    """
+    """Create new user"""
+
     return get_user_model().objects.create_user(**params)
 
 
 def user_url(user_id):
-    """
-    Return user detail URL
-    """
+    """Return user detail URL"""
+
     return reverse('user:user-detail', args=[user_id])
 
 
 class PublicUserApiTests(TestCase):
-    """
-    Test the users API endpoint (public)
-    """
+    """Test the users API endpoint (public)"""
 
     def setUp(self):
         self.client = APIClient()
 
     def test_successful_user_login(self):
-        """
-        Test successful user login with valid credentials
-        """
+        """Test successful user login with valid credentials"""
+
         payload = {
             'email': 'test@testdev.com',
             'password': 'testpass123'
@@ -51,9 +46,8 @@ class PublicUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_failed_user_login(self):
-        """
-        Test failed user login with invalid username or email
-        """
+        """Test failed user login with invalid username or email"""
+
         payload = {
             'email': 'nouser@testdev.com',
             'password': 'testpass123'
@@ -64,9 +58,8 @@ class PublicUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_failed_user_login_wrong_password(self):
-        """
-        Test failed user login with wrong password
-        """
+        """Test failed user login with wrong password"""
+
         payload = {
             'email': 'test@testdev.com',
             'password': 'wrongpass123'
@@ -77,9 +70,8 @@ class PublicUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_failed_user_login_missing_field(self):
-        """
-        Test failed user login with missing data for email field
-        """
+        """Test failed user login with missing data for email field"""
+
         res = self.client.post(LOGIN_URL, {
             'email': '',
             'password': 'testpass'
@@ -90,9 +82,7 @@ class PublicUserApiTests(TestCase):
 
 
 class PrivateManageUserApiTests(TestCase):
-    """
-    Test API requests that require authentication from manager
-    """
+    """Test API requests that require authentication from manager"""
 
     def setUp(self):
         self.manager = create_user(
@@ -119,9 +109,8 @@ class PrivateManageUserApiTests(TestCase):
         )
 
     def test_successful_retrieve_users_by_manager(self):
-        """
-        Test successful retrieve user by manager
-        """
+        """Test successful retrieve user by manager"""
+
         get_user_model().objects.create(
             email='testuser001@testdev.com',
             password='321secret321',
@@ -152,9 +141,8 @@ class PrivateManageUserApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_failed_retrieve_users_by_cashier(self):
-        """
-        Test failed retrieve users by cashier
-        """
+        """Test failed retrieve users by cashier"""
+
         self.client = APIClient()
         self.client.force_authenticate(user=self.cashier)
         res = self.client.get(USERS_URL)
@@ -162,9 +150,8 @@ class PrivateManageUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_successful_create_user_by_manager(self):
-        """
-        Test successful creation of a user with valid payload
-        """
+        """Test successful creation of a user with valid payload"""
+
         payload = {
             'name': 'Test name',
             'email': 'test@testdev.com',
@@ -179,9 +166,8 @@ class PrivateManageUserApiTests(TestCase):
         self.assertNotIn('password', res.data)
 
     def test_failed_create_user_missing_field(self):
-        """
-        Test failed creation of a user with invalid payload
-        """
+        """Test failed creation of a user with invalid payload"""
+
         payload = {
             'name': '',
             'email': 'thetestnewuser@testdev.com',
@@ -196,9 +182,8 @@ class PrivateManageUserApiTests(TestCase):
         self.assertFalse(exists)
 
     def test_failed_create_user_by_cashier(self):
-        """
-        Test failed creation of user by a non-manager user
-        """
+        """Test failed creation of user by a non-manager user"""
+
         self.client = APIClient()
         self.client.force_authenticate(user=self.cashier)
         payload = {
@@ -215,9 +200,8 @@ class PrivateManageUserApiTests(TestCase):
         self.assertFalse(user_exists)
 
     def test_failed_create_user_exists(self):
-        """
-        Test failed creation of a user with existing data
-        """
+        """Test failed creation of a user with existing data"""
+
         payload = {
             'name': 'Test cashier',
             'email': 'testcashier@testdev.com',
@@ -229,9 +213,9 @@ class PrivateManageUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_failed_create_user_short_password(self):
-        """
-        Test failed creation of a user with lesser characters than the required
-        """
+        """Test failed creation of a user
+        with lesser characters than the required"""
+
         payload = {
             'name': 'Test',
             'email': 'test@testdev.com',
@@ -246,9 +230,8 @@ class PrivateManageUserApiTests(TestCase):
         self.assertFalse(user_exists)
 
     def test_retrieve_manager_profile_success(self):
-        """
-        Test retrieving profile details of an authenticated manager
-        """
+        """Test retrieving profile details of an authenticated manager"""
+
         res = self.client.get(PROFILE_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -263,25 +246,22 @@ class PrivateManageUserApiTests(TestCase):
         })
 
     def test_failed_post_profile_not_allowed(self):
-        """
-        Test that POST is not allowed on the profile url
-        """
+        """Test that POST is not allowed on the profile url"""
+
         res = self.client.post(PROFILE_URL, {})
 
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_failed_full_update_profile_not_allowed(self):
-        """
-        Test that PUT is not allowed on the profile url
-        """
+        """Test that PUT is not allowed on the profile url"""
+
         res = self.client.put(PROFILE_URL, {})
 
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_successful_change_own_password(self):
-        """
-        Test successful updating of own password
-        """
+        """Test successful updating of own password"""
+
         payload = {
             'old_password': '123password123',
             'new_password': '123321password',
@@ -295,9 +275,8 @@ class PrivateManageUserApiTests(TestCase):
         self.assertNotIn('123321password', res.data)
 
     def test_success_partial_update_user_by_manager(self):
-        """
-        Test successful partial updating of a manageable user's profile
-        """
+        """Test successful partial updating of a manageable user's profile"""
+
         user = create_user(
             name='Old test name',
             email='testolduser@testdev.com',
@@ -315,9 +294,8 @@ class PrivateManageUserApiTests(TestCase):
         self.assertEqual(user.name, payload['name'])
 
     def test_success_full_update_by_manager(self):
-        """
-        Test successful updating of a manageable user's profile
-        """
+        """Test successful updating of a manageable user's profile"""
+
         user = create_user(
             name='Old new test name',
             email='testnewolduser@testdev.com',

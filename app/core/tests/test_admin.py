@@ -6,16 +6,14 @@ from core import models
 
 
 def sample_unit(name='gallon', short_name='gal'):
-    """
-    Create a sample unit for product
-    """
+    """Create a sample unit for product"""
+
     return models.Unit.objects.create(name=name, short_name=short_name)
 
 
 def sample_category(name='Hardware'):
-    """
-    Create a sample category for product
-    """
+    """Create a sample category for product"""
+
     return models.Category.objects.create(name=name)
 
 
@@ -66,9 +64,8 @@ class AdminSiteTests(TestCase):
         )
 
     def test_users_listed(self):
-        """
-        Test that users are listed on admin page
-        """
+        """Test that users are listed on admin page"""
+
         url = reverse('admin:core_user_changelist')
         res = self.client.get(url)
 
@@ -76,27 +73,23 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.user.email)
 
     def test_user_change_page(self):
-        """
-        Test that the user edit page works
-        """
+        """Test that the user edit page works"""
+
         url = reverse('admin:core_user_change', args=[self.user.id])
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_create_user_page(self):
-        """
-        Test that the create user page works
-        """
+        """Test that the create user page works"""
+
         url = reverse('admin:core_user_add')
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_units_listed(self):
-        """
-        Test that units are listed on admin page
-        """
+        """Test that units are listed on admin page"""
 
         url = reverse('admin:core_unit_changelist')
         res = self.client.get(url)
@@ -105,27 +98,23 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.unit.short_name)
 
     def test_unit_change_page(self):
-        """
-        Test that the unit edit page works
-        """
+        """Test that the unit edit page works"""
+
         url = reverse('admin:core_unit_change', args=[self.unit.id])
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_create_unit_page(self):
-        """
-        Test that the create unit page works
-        """
+        """Test that the create unit page works"""
+
         url = reverse('admin:core_unit_add')
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_categories_listed(self):
-        """
-        Test that categories are listed on admin page
-        """
+        """Test that categories are listed on admin page"""
 
         url = reverse('admin:core_category_changelist')
         res = self.client.get(url)
@@ -133,27 +122,23 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.category.name)
 
     def test_category_change_page(self):
-        """
-        Test that the category edit page works
-        """
+        """Test that the category edit page works"""
+
         url = reverse('admin:core_category_change', args=[self.category.id])
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_create_category_page(self):
-        """
-        Test that the create category page works
-        """
+        """Test that the create category page works"""
+
         url = reverse('admin:core_category_add')
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_products_listed(self):
-        """
-        Test that products are listed on admin page
-        """
+        """Test that products are listed on admin page"""
 
         url = reverse('admin:core_product_changelist')
         res = self.client.get(url)
@@ -161,27 +146,23 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.product.name)
 
     def test_product_change_page(self):
-        """
-        Test that the product edit page works
-        """
+        """Test that the product edit page works"""
+
         url = reverse('admin:core_product_change', args=[self.product.id])
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_create_product_page(self):
-        """
-        Test that the create product page works
-        """
+        """Test that the create product page works"""
+
         url = reverse('admin:core_category_add')
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_suppliers_listed(self):
-        """
-        Test that suppliers are listed on admin page
-        """
+        """Test that suppliers are listed on admin page"""
 
         url = reverse('admin:core_supplier_changelist')
         res = self.client.get(url)
@@ -189,27 +170,23 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.supplier.name)
 
     def test_supplier_change_page(self):
-        """
-        Test that the supplier edit page works
-        """
+        """Test that the supplier edit page works"""
+
         url = reverse('admin:core_supplier_change', args=[self.supplier.id])
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_create_supplier_page(self):
-        """
-        Test that the create supplier page works
-        """
+        """Test that the create supplier page works"""
+
         url = reverse('admin:core_supplier_add')
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_customer_listed(self):
-        """
-        Test that customers are listed on admin page
-        """
+        """Test that customers are listed on admin page"""
 
         url = reverse('admin:core_customer_changelist')
         res = self.client.get(url)
@@ -217,18 +194,15 @@ class AdminSiteTests(TestCase):
         self.assertContains(res, self.customer.name)
 
     def test_customer_change_page(self):
-        """
-        Test that the customer edit page works
-        """
+        """Test that the customer edit page works"""
+
         url = reverse('admin:core_customer_change', args=[self.customer.id])
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, 200)
 
     def test_create_customer_page(self):
-        """
-        Test that the create customer page works
-        """
+        """Test that the create customer page works"""
         url = reverse('admin:core_customer_add')
         res = self.client.get(url)
 

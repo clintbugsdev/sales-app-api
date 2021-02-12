@@ -19,9 +19,7 @@ class PermissionTests(TestCase):
         )
 
     def test_successful_authenticated_manager(self):
-        """
-        Test successful authenticated manager
-        """
+        """Test successful authenticated manager"""
 
         request = self.factory.get('/test/')
         request.user = self.manager
@@ -32,9 +30,8 @@ class PermissionTests(TestCase):
         self.assertTrue(permission)
 
     def test_failed_authenticated_non_manager(self):
-        """
-        Test failed authenticated non manager or as staff
-        """
+        """Test failed authenticated non manager or as staff"""
+
         request = self.factory.get('/test/')
         request.user = self.staff
 

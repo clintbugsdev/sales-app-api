@@ -13,16 +13,13 @@ CATEGORIES_URL = reverse('product:category-list')
 
 
 def detail_url(category_id):
-    """
-    Return category detail URL
-    """
+    """Return category detail URL"""
+
     return reverse('product:category-detail', args=[category_id])
 
 
 class PublicCategoryApiTests(TestCase):
-    """
-    Test the publicity available categories API
-    """
+    """Test the publicity available categories API"""
 
     def setUp(self):
         self.client = APIClient()
@@ -37,9 +34,7 @@ class PublicCategoryApiTests(TestCase):
 
 
 class PrivateCategoryApiTests(TestCase):
-    """
-    Test the Category API for authenticated user
-    """
+    """Test the Category API for authenticated user"""
 
     def setUp(self):
         self.manager = get_user_model().objects.create_manager(
@@ -55,9 +50,8 @@ class PrivateCategoryApiTests(TestCase):
         )
 
     def test_successful_retrieve_categories_by_manager(self):
-        """
-        Test success retrieve categories by manager
-        """
+        """Test success retrieve categories by manager"""
+
         Category.objects.create(name='Toys')
         Category.objects.create(name='Ladies Ware')
 
@@ -70,9 +64,8 @@ class PrivateCategoryApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_successful_retrieve_categories_by_non_manager(self):
-        """
-        Test success retrieve categories by non-manager
-        """
+        """Test success retrieve categories by non-manager"""
+
         Category.objects.create(name='T-shirts')
         Category.objects.create(name='Hardware')
 
@@ -87,9 +80,8 @@ class PrivateCategoryApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_successful_create_category_by_manager(self):
-        """
-        Test successful creation of a new category by manager
-        """
+        """Test successful creation of a new category by manager"""
+
         payload = {'name': 'Test category'}
         res = self.client.post(CATEGORIES_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -101,9 +93,8 @@ class PrivateCategoryApiTests(TestCase):
         self.assertTrue(exists)
 
     def test_failed_create_category_by_non_manager(self):
-        """
-        Test failed creation of a new category by non-manager
-        """
+        """Test failed creation of a new category by non-manager"""
+
         self.client = APIClient()
         self.client.force_authenticate(self.cashier)
 
@@ -118,9 +109,8 @@ class PrivateCategoryApiTests(TestCase):
         self.assertFalse(exists)
 
     def test_successful_update_category_by_manager(self):
-        """
-        Test successful update category by manager
-        """
+        """Test successful update category by manager"""
+
         category = Category.objects.create(name='Test old category')
 
         payload = {'name': 'Test new category'}
@@ -132,9 +122,8 @@ class PrivateCategoryApiTests(TestCase):
         self.assertEqual(category.name, payload['name'])
 
     def test_failed_create_category_missing_field(self):
-        """
-        Test failed creating a new category with invalid payload
-        """
+        """Test failed creating a new category with invalid payload"""
+
         payload = {'name': ''}
         res = self.client.post(CATEGORIES_URL, payload)
 

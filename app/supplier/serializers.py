@@ -4,9 +4,7 @@ from core.models import Supplier
 
 
 class SupplierSerializer(serializers.ModelSerializer):
-    """
-    Serializer for Supplier objects
-    """
+    """Serializer for Supplier objects"""
 
     class Meta:
         model = Supplier

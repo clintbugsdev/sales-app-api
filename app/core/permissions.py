@@ -2,9 +2,7 @@ from rest_framework import permissions
 
 
 class IsAuthenticatedManager(permissions.BasePermission):
-    """
-    Allows access only to managers or superusers
-    """
+    """Allows access only to managers or superusers"""
 
     def has_permission(self, request, view):
         if bool(request.user and request.user.is_authenticated):

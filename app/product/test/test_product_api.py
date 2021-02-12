@@ -12,23 +12,20 @@ PRODUCTS_URL = reverse('product:product-list')
 
 
 def detail_url(product_id):
-    """
-    Return product detail URL
-    """
+    """Return product detail URL"""
+
     return reverse('product:product-detail', args=[product_id])
 
 
 def sample_unit(name='box', short_name='bx'):
-    """
-    Create and return a sample unit
-    """
+    """Create and return a sample unit"""
+
     return Unit.objects.create(name=name, short_name=short_name)
 
 
 def sample_category(name='Bags'):
-    """
-    Create and return a sample category
-    """
+    """Create and return a sample category"""
+
     return Category.objects.create(name=name)
 
 
@@ -47,9 +44,7 @@ def sample_product(unit, **params):
 
 
 class PublicProductApiTests(TestCase):
-    """
-    Test unauthenticated product API access
-    """
+    """Test unauthenticated product API access"""
 
     def setUp(self):
         self.client = APIClient()
@@ -64,9 +59,7 @@ class PublicProductApiTests(TestCase):
 
 
 class PrivateProductApiTests(TestCase):
-    """
-    Test the Product API for authenticated user
-    """
+    """Test the Product API for authenticated user"""
 
     def setUp(self):
         self.client = APIClient()
@@ -86,9 +79,8 @@ class PrivateProductApiTests(TestCase):
         )
 
     def test_successful_retrieve_products_by_manager(self):
-        """
-        Test successful retrieving a list of products by manager
-        """
+        """Test successful retrieving a list of products by manager"""
+
         sample_product(unit=sample_unit())
         sample_product(unit=sample_unit(), **{
             'name': 'Novellino',
@@ -105,9 +97,8 @@ class PrivateProductApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_successful_retrieve_products_by_non_manager(self):
-        """
-        Test successful retrieving a list of products by cashier
-        """
+        """Test successful retrieving a list of products by cashier"""
+
         sample_product(unit=sample_unit())
         sample_product(unit=sample_unit())
 
@@ -123,9 +114,8 @@ class PrivateProductApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_success_view_product_detail_by_non_manager(self):
-        """
-        Test viewing a product detail
-        """
+        """Test viewing a product detail"""
+
         unit = sample_unit()
         product = sample_product(unit=unit)
         product.categories.add(sample_category())
@@ -142,9 +132,8 @@ class PrivateProductApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_successful_create_product_by_manager(self):
-        """
-        Test successful creation of a new product by manager
-        """
+        """Test successful creation of a new product by manager"""
+
         unit = sample_unit()
         payload = {
             'code': '313543',
@@ -167,9 +156,9 @@ class PrivateProductApiTests(TestCase):
         self.assertFalse(res.data['on_sale'])
 
     def test_successful_create_product_with_cat_by_manager(self):
-        """
-        Test successful creation of a new product with categories by manager
-        """
+        """Test successful creation of a
+        new product with categories by manager"""
+
         unit = sample_unit()
         category1 = sample_category(name='Phones')
         category2 = sample_category(name='Computers')
@@ -197,9 +186,8 @@ class PrivateProductApiTests(TestCase):
         self.assertIn(category2, categories)
 
     def test_failed_create_product_by_non_manager(self):
-        """
-        Test failed creation of a new product by cashier
-        """
+        """Test failed creation of a new product by cashier"""
+
         unit = sample_unit()
         payload = {
             'code': '43212',
@@ -224,9 +212,8 @@ class PrivateProductApiTests(TestCase):
         self.assertFalse(exists)
 
     def test_successful_full_update_product_by_manager(self):
-        """
-        Test successful full update product by manager
-        """
+        """Test successful full update product by manager"""
+
         unit1 = sample_unit(name='kilogram', short_name='kg')
         unit2 = sample_unit(name='gram', short_name='g')
         product = sample_product(unit=unit1)
@@ -264,9 +251,8 @@ class PrivateProductApiTests(TestCase):
         self.assertEqual(len(categories), 0)
 
     def test_successful_partial_update_product_by_manager(self):
-        """
-        Test successful partial update product by manager
-        """
+        """Test successful partial update product by manager"""
+
         unit = sample_unit(name='liter', short_name='l')
         product = sample_product(unit=unit)
         new_category = sample_category(name='Belt')
@@ -290,9 +276,8 @@ class PrivateProductApiTests(TestCase):
         self.assertIn(new_category, categories)
 
     def test_failed_partial_update_product_by_non_manager(self):
-        """
-        Test failed partial update product by cashier
-        """
+        """Test failed partial update product by cashier"""
+
         unit = sample_unit(name='liter', short_name='l')
         product = sample_product(unit=unit)
         new_category = sample_category(name='Socks')

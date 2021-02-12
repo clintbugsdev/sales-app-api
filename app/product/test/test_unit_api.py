@@ -13,16 +13,13 @@ UNITS_URL = reverse('product:unit-list')
 
 
 def detail_url(unit_id):
-    """
-    Return unit detail URL
-    """
+    """Return unit detail URL"""
+
     return reverse('product:unit-detail', args=[unit_id])
 
 
 class PublicUnitApiTests(TestCase):
-    """
-    Test the publicity available units API
-    """
+    """Test the publicity available units API"""
 
     def setUp(self):
         self.client = APIClient()
@@ -37,9 +34,7 @@ class PublicUnitApiTests(TestCase):
 
 
 class PrivateUnitApiTests(TestCase):
-    """
-    Test the Unit API for authenticated user
-    """
+    """Test the Unit API for authenticated user"""
 
     def setUp(self):
         self.manager = get_user_model().objects.create_manager(
@@ -55,9 +50,8 @@ class PrivateUnitApiTests(TestCase):
         )
 
     def test_successful_retrieve_units_by_manager(self):
-        """
-        Test success retrieve units by manager
-        """
+        """Test success retrieve units by manager"""
+
         Unit.objects.create(name='kilogram', short_name='kg')
         Unit.objects.create(name='piece', short_name='pc')
 
@@ -71,9 +65,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_successful_retrieve_units_by_non_manager(self):
-        """
-        Test success retrieve units by non-manager
-        """
+        """Test success retrieve units by non-manager"""
+
         Unit.objects.create(name='T-shirts')
         Unit.objects.create(name='Hardware')
 
@@ -89,9 +82,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_successful_create_unit_by_manager(self):
-        """
-        Test successful creation of a new unit by manager
-        """
+        """Test successful creation of a new unit by manager"""
+
         payload = {'name': 'feet', 'short_name': 'ft'}
         res = self.client.post(UNITS_URL, payload)
 
@@ -104,9 +96,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertTrue(exists)
 
     def test_failed_create_unit_by_non_manager(self):
-        """
-        Test failed creation of a new unit by non-manager
-        """
+        """Test failed creation of a new unit by non-manager"""
+
         self.client = APIClient()
         self.client.force_authenticate(self.cashier)
 
@@ -122,9 +113,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertFalse(exists)
 
     def test_successful_update_unit_by_manager(self):
-        """
-        Test successful update unit by manager
-        """
+        """Test successful update unit by manager"""
+
         unit = Unit.objects.create(name='liter', short_name='lt')
 
         payload = {'name': 'gram', 'short_name': 'g'}
@@ -137,9 +127,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertEqual(unit.short_name, payload['short_name'])
 
     def test_failed_create_unit_missing_field(self):
-        """
-        Test failed creating a new unit with invalid payload
-        """
+        """Test failed creating a new unit with invalid payload"""
+
         payload = {'name': '', 'short_name': 'y'}
         res = self.client.post(UNITS_URL, payload)
 

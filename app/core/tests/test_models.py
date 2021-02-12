@@ -142,9 +142,7 @@ class ModelTests(TestCase):
         self.assertEqual(str(product), product.name)
 
     def test_successful_supplier_str(self):
-        """
-        Test the supplier string representation
-        """
+        """Test the supplier string representation"""
 
         supplier = models.Supplier.objects.create(
             code='00001',
@@ -157,9 +155,7 @@ class ModelTests(TestCase):
         self.assertEqual(str(supplier), supplier.name)
 
     def test_successful_customer_str(self):
-        """
-        Test the customer string representation
-        """
+        """Test the customer string representation"""
 
         customer = models.Customer.objects.create(
             code='4326',

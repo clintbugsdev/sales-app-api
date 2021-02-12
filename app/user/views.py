@@ -69,18 +69,16 @@ class ManageUserViewset(viewsets.GenericViewSet,
                         mixins.CreateModelMixin,
                         mixins.RetrieveModelMixin,
                         mixins.UpdateModelMixin):
-    """
-    List, create, retrieve, and update user by authenticated manager
-    """
+    """List, create, retrieve, and update user by authenticated manager"""
+
     serializer_class = UserSerializer
     queryset = get_user_model().objects.all().order_by('-id')
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (IsAuthenticatedManager,)
 
     def get_queryset(self):
-        """
-        Retrieve the users to manage
-        """
+        """Retrieve the users to manage"""
+
         params = {'is_superuser': False}
         if self.request.user.is_manager and not self.request.user.is_superuser:
             params['is_manager'] = False
@@ -88,9 +86,8 @@ class ManageUserViewset(viewsets.GenericViewSet,
         return self.queryset.filter(**params).exclude(id=self.request.user.id)
 
     def get_serializer_class(self):
-        """
-        Return appropriate serializer class
-        """
+        """Return appropriate serializer class"""
+
         if not self.request.user.is_superuser:
             return StaffUserSerializer
 

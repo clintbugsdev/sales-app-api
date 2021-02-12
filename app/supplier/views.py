@@ -12,9 +12,8 @@ class BaseSupplierAttrViewSet(viewsets.GenericViewSet,
                               mixins.CreateModelMixin,
                               mixins.RetrieveModelMixin,
                               mixins.UpdateModelMixin):
-    """
-    Base viewset for user owned product attributes
-    """
+    """Base viewset for user owned product attributes"""
+
     authentication_classes = (TokenAuthentication,)
     permission_classes_by_action = {
         'create': [IsAuthenticatedManager],
@@ -23,15 +22,13 @@ class BaseSupplierAttrViewSet(viewsets.GenericViewSet,
     }
 
     def get_queryset(self):
-        """
-        Return objects
-        """
+        """Return objects"""
+
         return self.queryset.order_by('name')
 
     def get_permissions(self):
-        """
-        Return permission_classes depending on action
-        """
+        """Return permission_classes depending on action"""
+
         try:
             # return permission_classes depending on `action`
             return [
@@ -49,8 +46,7 @@ class BaseSupplierAttrViewSet(viewsets.GenericViewSet,
 
 
 class SupplierViewSet(BaseSupplierAttrViewSet):
-    """
-    Manage supplier in the database
-    """
+    """Manage supplier in the database"""
+
     queryset = Supplier.objects.all()
     serializer_class = serializers.SupplierSerializer

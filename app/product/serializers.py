@@ -4,9 +4,7 @@ from core.models import Category, Unit, Product
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """
-    Serializer for category objects
-    """
+    """Serializer for category objects"""
 
     class Meta:
         model = Category
@@ -15,9 +13,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class UnitSerializer(serializers.ModelSerializer):
-    """
-    Serializer for unit objects
-    """
+    """Serializer for unit objects"""
 
     class Meta:
         model = Unit
@@ -26,9 +22,7 @@ class UnitSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    """
-    Serialize a product
-    """
+    """Serialize for product objects"""
 
     unit = serializers.PrimaryKeyRelatedField(
         queryset=Unit.objects.all(),
@@ -52,9 +46,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductDetailSerializer(ProductSerializer):
-    """
-    Serialize a product detail
-    """
+    """Serialize a product detail"""
+
     unit = UnitSerializer(read_only=True)
 
     categories = CategorySerializer(

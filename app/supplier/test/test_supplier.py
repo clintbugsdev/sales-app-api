@@ -13,33 +13,27 @@ SUPPLIERS_URL = reverse('supplier:supplier-list')
 
 
 def detail_url(supplier_id):
-    """
-    Return supplier detail URL
-    """
+    """Return supplier detail URL"""
+
     return reverse('supplier:supplier-detail', args=[supplier_id])
 
 
 class PublicUnitApiTests(TestCase):
-    """
-    Test the publicity available units API
-    """
+    """Test the publicity available units API"""
 
     def setUp(self):
         self.client = APIClient()
 
     def test_failed_login_required(self):
-        """
-        Test that login is required fo retrieving categories
-        """
+        """Test that login is required fo retrieving categories"""
+
         res = self.client.get(SUPPLIERS_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateUnitApiTests(TestCase):
-    """
-    Test the Supplier API for authenticated user
-    """
+    """Test the Supplier API for authenticated user"""
 
     def setUp(self):
         self.manager = get_user_model().objects.create_manager(
@@ -55,9 +49,8 @@ class PrivateUnitApiTests(TestCase):
         )
 
     def test_successful_retrieve_units_by_manager(self):
-        """
-        Test success retrieve units by manager
-        """
+        """Test success retrieve units by manager"""
+
         Supplier.objects.create(
             code='132',
             name='The first supplier',
@@ -83,9 +76,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_successful_retrieve_suppliers_by_non_manager(self):
-        """
-        Test success retrieve suppliers by non-manager
-        """
+        """Test success retrieve suppliers by non-manager"""
+
         Supplier.objects.create(
             code='135',
             name='The third supplier',
@@ -113,9 +105,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_successful_create_supplier_by_manager(self):
-        """
-        Test successful creation of a new supplier by manager
-        """
+        """Test successful creation of a new supplier by manager"""
+
         payload = {
             'code': '327',
             'name': 'The fifth supplier',
@@ -135,9 +126,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertTrue(exists)
 
     def test_failed_create_supplier_by_non_manager(self):
-        """
-        Test failed creation of a new supplier by non-manager
-        """
+        """Test failed creation of a new supplier by non-manager"""
+
         self.client = APIClient()
         self.client.force_authenticate(self.cashier)
 
@@ -160,9 +150,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertFalse(exists)
 
     def test_successful_update_supplier_by_manager(self):
-        """
-        Test successful update supplier by manager
-        """
+        """Test successful update supplier by manager"""
+
         supplier = Supplier.objects.create(
             code='2137',
             name='The seventh supplier',
@@ -181,9 +170,8 @@ class PrivateUnitApiTests(TestCase):
         self.assertEqual(supplier.contact_no, payload['contact_no'])
 
     def test_failed_create_supplier_missing_field(self):
-        """
-        Test failed creating a new supplier with invalid payload
-        """
+        """Test failed creating a new supplier with invalid payload"""
+
         payload = {
             'code': '',
             'name': 'The eighth supplier',
