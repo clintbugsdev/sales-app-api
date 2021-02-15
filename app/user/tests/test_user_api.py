@@ -213,8 +213,7 @@ class PrivateManageUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_failed_create_user_short_password(self):
-        """Test failed creation of a user
-        with lesser characters than the required"""
+        """Test failed create user w/ short password than the required"""
 
         payload = {
             'name': 'Test',

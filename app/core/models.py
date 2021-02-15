@@ -63,6 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_cashier = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -77,6 +78,7 @@ class Unit(models.Model):
     name = models.CharField(max_length=75)
     short_name = models.CharField(max_length=25)
     is_active = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -89,6 +91,7 @@ class Category(models.Model):
 
     name = models.CharField(max_length=225)
     is_active = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -129,6 +132,7 @@ class Supplier(models.Model):
     address = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     is_active = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -145,8 +149,35 @@ class Customer(models.Model):
     address = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, blank=True)
     is_active = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
+
+
+class PurchaseOrder(models.Model):
+    """Purchase order of products"""
+
+    product = models.ForeignKey(
+        'Product',
+        on_delete=models.RESTRICT
+    )
+
+    quantity = models.FloatField()
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    sub_total = models.DecimalField(max_digits=12, decimal_places=2)
+    required_date = models.DateField()
+    is_cancelled = models.BooleanField(default=False)
+
+    supplier = models.ForeignKey(
+        'Supplier',
+        on_delete=models.RESTRICT
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'PO#{self.id}'
