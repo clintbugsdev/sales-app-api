@@ -63,7 +63,27 @@ def sample_supplier(
         contact_no=contact_no,
         address=address,
         email=email,
-        is_active=True
+        is_active=is_active
+    )
+
+
+def sample_purchase_order(
+        quantity=100,
+        unit_price=200,
+        sub_total=20000,
+        required_date=datetime.datetime(2021, 4, 17),
+        is_cancelled=False
+):
+    """Create a sample purchase order"""
+
+    return models.PurchaseOrder.objects.create(
+        product=sample_product(),
+        quantity=quantity,
+        unit_price=unit_price,
+        sub_total=sub_total,
+        required_date=required_date,
+        supplier=sample_supplier(),
+        is_cancelled=is_cancelled,
     )
 
 
@@ -210,3 +230,19 @@ class ModelTests(TestCase):
         )
         po_no = f'PO#{purchase_order.id}'
         self.assertEqual(str(purchase_order), po_no)
+
+    def test_successful_receive_product(self):
+        """Test the receive product str representation"""
+
+        receive_product = models.ReceiveProduct.objects.create(
+            product=sample_product(),
+            quantity=20,
+            unit_price=200,
+            sub_total=4000,
+            required_date=datetime.datetime(2021, 5, 17),
+            is_cancelled=False,
+            purchase_order=sample_purchase_order(),
+            supplier=sample_supplier()
+        )
+        rp_no = f'RP#{receive_product.id}'
+        self.assertEqual(str(receive_product), rp_no)

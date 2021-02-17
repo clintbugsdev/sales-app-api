@@ -181,3 +181,34 @@ class PurchaseOrder(models.Model):
 
     def __str__(self):
         return f'PO#{self.id}'
+
+
+class ReceiveProduct(models.Model):
+    """Receive products"""
+    product = models.ForeignKey(
+        'Product',
+        on_delete=models.RESTRICT
+    )
+
+    quantity = models.FloatField()
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    sub_total = models.DecimalField(max_digits=12, decimal_places=2)
+    required_date = models.DateField()
+
+    supplier = models.ForeignKey(
+        'Supplier',
+        on_delete=models.RESTRICT
+    )
+
+    purchase_order = models.ForeignKey(
+        'PurchaseOrder',
+        null=True,
+        on_delete=models.RESTRICT
+    )
+
+    is_cancelled = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'RP#{self.id}'
