@@ -5,9 +5,12 @@ from supplier import views
 
 router = DefaultRouter()
 router.register('suppliers', views.SupplierViewSet)
+router.register('purchase-orders',
+                views.PurchaseOrderViewSet,
+                basename='purchase-order')
 
 app_name = 'supplier'
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
 ]

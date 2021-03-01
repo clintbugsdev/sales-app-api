@@ -10,7 +10,7 @@ from user.serializers import StaffUserSerializer
 LOGIN_URL = reverse('user:login')
 LOGOUT_URL = reverse('user:logout')
 PROFILE_URL = reverse('user:profile')
-CHANGE_PASSWORD_URL = reverse('user:change_password')
+CHANGE_PASSWORD_URL = reverse('user:change-password')
 USERS_URL = reverse('user:user-list')
 
 

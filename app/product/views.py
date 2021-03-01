@@ -22,9 +22,8 @@ class BaseProductAttrViewSet(viewsets.GenericViewSet,
     }
 
     def get_queryset(self):
-        """
-        Return objects
-        """
+        """Return objects"""
+
         return self.queryset.order_by('name').distinct()
 
     def get_permissions(self):
@@ -65,12 +64,6 @@ class ProductViewSet(BaseProductAttrViewSet):
 
     queryset = Product.objects.all().order_by('name')
     serializer_class = serializers.ProductSerializer
-
-    permission_classes_by_action = {
-        'create': [IsAuthenticatedManager],
-        'update': [IsAuthenticatedManager],
-        'partial_update': [IsAuthenticatedManager],
-    }
 
     def _params_to_ints(self, qs):
         """Convert a list of string IDs to a list of integers"""

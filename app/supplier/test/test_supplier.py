@@ -25,7 +25,7 @@ class PublicUnitApiTests(TestCase):
         self.client = APIClient()
 
     def test_failed_login_required(self):
-        """Test that login is required fo retrieving categories"""
+        """Test that login is required for retrieving supplier"""
 
         res = self.client.get(SUPPLIERS_URL)
 

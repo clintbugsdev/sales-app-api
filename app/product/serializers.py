@@ -8,7 +8,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'is_active')
+        fields = (
+            'id',
+            'name',
+            'is_active'
+        )
         read_only_field = ('id',)
 
 
@@ -17,7 +21,12 @@ class UnitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Unit
-        fields = ('id', 'name', 'short_name', 'is_active')
+        fields = (
+            'id',
+            'name',
+            'short_name',
+            'is_active'
+        )
         read_only_field = ('id',)
 
 
@@ -36,11 +45,16 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = (
-            'id', 'code', 'name',
-            'unit', 'unit_in_stock', 'unit_price',
+            'id',
+            'code',
+            'name',
+            'unit',
+            'unit_in_stock',
+            'unit_price',
             'categories',
             'discount_percentage',
-            'reorder_level', 'on_sale'
+            'reorder_level',
+            'on_sale'
         )
         read_only_fields = ('id',)
 

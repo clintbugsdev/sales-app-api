@@ -2,7 +2,7 @@ from rest_framework import (viewsets, mixins)
 from rest_framework.authentication import TokenAuthentication
 
 from core.permissions import IsAuthenticatedManager
-from core.models import Supplier
+from core.models import Supplier, PurchaseOrder
 
 from supplier import serializers
 
@@ -50,3 +50,16 @@ class SupplierViewSet(BaseSupplierAttrViewSet):
 
     queryset = Supplier.objects.all()
     serializer_class = serializers.SupplierSerializer
+
+
+class PurchaseOrderViewSet(BaseSupplierAttrViewSet):
+    """manage purchase order in the database"""
+
+    queryset = PurchaseOrder.objects.all()
+    serializer_class = serializers.PurchaseOrderSerializer
+    permission_classes = (IsAuthenticatedManager,)
+
+    def get_queryset(self):
+        """Return objects"""
+
+        return self.queryset.order_by('-created_at')

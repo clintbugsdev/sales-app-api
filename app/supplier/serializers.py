@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Supplier
+from core.models import Product, Supplier, PurchaseOrder
 
 
 class SupplierSerializer(serializers.ModelSerializer):
@@ -16,5 +16,31 @@ class SupplierSerializer(serializers.ModelSerializer):
             'address',
             'email',
             'is_active'
+        )
+        read_only_fields = ('id',)
+
+
+class PurchaseOrderSerializer(serializers.ModelSerializer):
+    """Serializer for Purchase Order object"""
+
+    product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(),
+    )
+
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=Supplier.objects.all(),
+    )
+
+    class Meta:
+        model = PurchaseOrder
+        fields = (
+            'id',
+            'product',
+            'quantity',
+            'unit_price',
+            'sub_total',
+            'required_date',
+            'supplier',
+            'is_cancelled'
         )
         read_only_fields = ('id',)

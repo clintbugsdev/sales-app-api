@@ -26,7 +26,7 @@ class PublicUnitApiTests(TestCase):
 
     def test_failed_login_required(self):
         """
-        Test that login is required fo retrieving categories
+        Test that login is required for retrieving unites
         """
         res = self.client.get(UNITS_URL)
 
